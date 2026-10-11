@@ -1,0 +1,44 @@
+
+name: CI Workflow
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check project files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+
+      - name: Build static website
+        run: |
+          mkdir -p dist
+          cp index.html style.css script.js dist/
+
+      - name: Test JavaScript syntax
+        run: node --check script.js
+
+      - name: Verify build output
+        run: |
+          test -f dist/index.html
+          test -f dist/style.css
+          test -f dist/script.js
